@@ -16,8 +16,8 @@ class Reader(nn.Module):
 
         #attention weighted question
         self.qemb_match = layers.SeqAttnMatch(self.config.embedding_dim)
-        self.qemb_match.linear.weight.normal_(0, 1)
-        self.qemb_match.linear.bias.zero_()
+        init.normal_(self.qemb_match.linear.weight, 1)
+        init.constant(self.qemb_match.linear.bias, 0.1)
 
         self.passage_input_size = self.config.embedding_dim + self.config.num_features + self.config.embedding_dim
         self.question_input_size = self.config.embedding_dim
@@ -37,23 +37,23 @@ class Reader(nn.Module):
         
         #question merging
         self.self_attn = layers.LinearSeqAttn(self.config.hidden_size)
-        self.self_attn.linear.weight.normal_(0, 1)
-        self.self_attn.linear.bias.zero_()
+        init.normal_(self.self_attn.linear.weight, 1)
+        init.constant(self.self_attn.linear.bias, 0.1)
 
         #span start/end
         self.start_attn = layers.BilinearSeqAttn(
             self.config.hidden_size,
             self.config.hidden_size
         )
-        self.start_attn.linear.weight.normal_(0, 1)
-        self.start_attn.linear.bias.zero_()
+        init.normal_(self.qemb_match.linear.weight, 1)
+        init.constant(self.qemb_match.linear.bias, 0.1)
 
         self.end_attn = layers.BilinearSeqAttn(
             self.config.hidden_size,
             self.config.hidden_size
         )
-        self.end_attn.linear.weight.normal_(0, 1)
-        self.end_attn.linear.bias.zero_()
+        init.normal_(self.qemb_match.linear.weight, 1)
+        init.constant(self.qemb_match.linear.bias, 0.1)
     
     def forward(self, x1, x1_f, x2):
         '''
