@@ -31,7 +31,7 @@ class Trainer(object):
             self.model = Reader(self.config).to(device)
 
         print('init embedding...')
-        self.model.load_embeddings(self.dictionary.word_to_ix, self.config.resource.embedding_dir)
+        #self.model.load_embeddings(self.dictionary.word_to_ix, self.config.resource.embedding_dir)
         
         print('vectorize...')
         train_X1, train_X1_f, train_X2, train_Y = self.vectorize(self.train_data)

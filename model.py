@@ -1,5 +1,6 @@
 import torch 
 import torch.nn as nn
+from torch.nn import init
 
 import layers
 import tqdm
@@ -15,6 +16,7 @@ class Reader(nn.Module):
 
         #attention weighted question
         self.qemb_match = layers.SeqAttnMatch(self.config.embedding_dim)
+        self.qemb_match.linear.data.normal_(0, 1)
 
         self.passage_input_size = self.config.embedding_dim + self.config.num_features + self.config.embedding_dim
         self.question_input_size = self.config.embedding_dim
@@ -24,6 +26,7 @@ class Reader(nn.Module):
             num_layers=self.config.passage_layers,
             dropout_rate=self.config.dropout_rate
         )
+        self.passage_encoder.rnns.data.normal_(0, 1)
 
         self.question_encoder = layers.StackedBiLSTM(
             input_size=self.question_input_size,
@@ -31,20 +34,24 @@ class Reader(nn.Module):
             num_layers=self.config.question_layers,
             dropout_rate=self.config.dropout_rate
         )
-
+        self.question_encoder.rnns.data.normal_(0, 1)
+        
         #question merging
         self.self_attn = layers.LinearSeqAttn(self.config.hidden_size)
+        self.self_attn.linear.data.normal_(0, 1)
 
         #span start/end
         self.start_attn = layers.BilinearSeqAttn(
             self.config.hidden_size,
             self.config.hidden_size
         )
+        self.start_attn.linear.data.normal_(0, 1)
 
         self.end_attn = layers.BilinearSeqAttn(
             self.config.hidden_size,
             self.config.hidden_size
         )
+        self.end_attn.linear.data.normal_(0, 1)
     
     def forward(self, x1, x1_f, x2):
         '''
